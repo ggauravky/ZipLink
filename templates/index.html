@@ -4,12 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ZipLink - URL Shortner</title>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>ZipLink - URL Shortner</h1>
-    <form action="/shorten" method="post">
-        <input type="text" name="url" placeholder="Enter your URL here" required>
-        <button type="submit">Shorten</button>
-    </form>
+<body class="bg-gray-300 text-gray-800 font-sans p-6">
+    <div class="main">
+        <h1 class="text-3xl font-bold mb-4">ZipLink - URL Shortner</h1>
+
+        <form method="post" class="bg-white shadow-md rounded p-6 mb-6 space-y-4">
+            <label class="block">
+                <span class="text-gray-700">Enter URL to shorten:</span>
+                <input 
+                    type="text" 
+                    name="url" 
+                    placeholder="https://example.com/url"
+                    class="mt-1 block w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    required
+
+            </label>
+            <button 
+                    type="submit" 
+                    class="p- m-6 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors duration-200 "
+                >Shorten URL</button>
+
+           
+        </form>
+
+        <h2 class="text-2xl font-semibold mb-4">Shortened URLs:</h2>
+        {% if all_urls %}
+        <div>
+            <table class="bg-gray-200">
+                <thead class="bg-gray-200"
+                <tr>
+                    <th class="border px-4 py-2 text-left">short URL</th>
+                    <th class="border px-4 py-2 text-left">original URL</th>
+                    <th class="border px-4 py-2 text-left">Visits</th>
+                    <th class="border px-4 py-2 text-left">Actions</th>
+                </tr>
+                </thead>
+                <tbody>
+                    {% for url in all_urls %}
+
+                    <tr class="hover:bg-gray-100">
+                        <td class="border px-4 py-2 text-blue-600 underline">
+                            <a href="/{{url[1]}}" target="_blank" class="text-blue-500 hover:underline">
+                                http://localhost:5000/{{url[1]}}
+                            </a>
+                        </td>
+                        <td class="border px-4 py-2">{{url[0]}}</td>
+                        <td class="border px-4 py-2">{{url[2]}}</td>
+                        <td class="border px-4 py-2">
+                            <form 
+                            action="/delete/{{url[1]}}" 
+                            method="post"
+                            onsubmit="return confirm('Delete this URL?');"
+                            >
+                            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors duration-200"
+                                >Delete</button>
+                            </form>
+                        </td>
+                    </tr>
+
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        
+        {% else %}
+        <p class="text-gray-600">No shortened URLs available.</p>
+
+        {% endif %}
+    </div>
 </body>
 </html>
