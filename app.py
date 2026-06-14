@@ -7,7 +7,7 @@ from model import (
     get_url, 
     increment_visit_count, 
     get_all_urls, 
-    delete_url)
+    delete_url as delete_url_from_db)
 
 app = Flask(__name__)
 
@@ -29,6 +29,19 @@ def index():
 @app.route('/about')
 def about():
     return 'This is the about page.'
+
+@app.route('/<short_code>')
+def redirect_url(short_code):
+    url_data=get_url(short_code)
+    if url_data:
+        increment_visit_count(short_code)
+        return redirect(url_data[0])
+    return render_template("404.html"), 404
+
+@app.route('/delete/<short_code>', methods=['POST'])
+def delete_short_url(short_code):
+    delete_url_from_db(short_code)
+    return redirect("/")
 
 if __name__ == '__main__':
     app.run(debug=True)

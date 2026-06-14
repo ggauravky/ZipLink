@@ -3,76 +3,121 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ZipLink - URL Shortner</title>
+    <title>ZipLink - URL Shortener</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-300 text-gray-800 font-sans p-6">
-    <div class="main">
-        <h1 class="text-3xl font-bold mb-4">ZipLink - URL Shortner</h1>
+<body class="min-h-screen bg-slate-50 text-slate-900">
+    <main class="mx-auto flex w-full max-w-6xl flex-col gap-8 px-4 py-8 sm:px-6 lg:px-8">
+        <header class="flex flex-col gap-2 border-b border-slate-200 pb-6 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+                <p class="text-sm font-medium uppercase tracking-wide text-blue-700">URL Shortener</p>
+                <h1 class="mt-1 text-3xl font-semibold text-slate-950">ZipLink</h1>
+            </div>
+            <p class="max-w-xl text-sm leading-6 text-slate-600">
+                Create short links, track visits, and remove links you no longer need.
+            </p>
+        </header>
 
-        <form method="post" class="bg-white shadow-md rounded p-6 mb-6 space-y-4">
-            <label class="block">
-                <span class="text-gray-700">Enter URL to shorten:</span>
-                <input 
-                    type="text" 
-                    name="url" 
-                    placeholder="https://example.com/url"
-                    class="mt-1 block w-full border border-gray-300 rounded p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                    required
+        <section class="rounded-lg border border-slate-200 bg-white p-5 shadow-sm">
+            <form method="post" class="flex flex-col gap-3 md:flex-row md:items-end">
+                <label class="flex-1">
+                    <span class="mb-2 block text-sm font-medium text-slate-700">Destination URL</span>
+                    <input
+                        type="url"
+                        name="url"
+                        placeholder="https://example.com/page"
+                        autocomplete="url"
+                        class="block w-full rounded-md border border-slate-300 bg-white px-3 py-2.5 text-sm text-slate-900 outline-none transition placeholder:text-slate-400 focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
+                        required
+                    >
+                </label>
+                <button
+                    type="submit"
+                    class="inline-flex h-11 items-center justify-center rounded-md bg-blue-600 px-5 text-sm font-semibold text-white transition hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-100"
+                >
+                    Shorten URL
+                </button>
+            </form>
+        </section>
 
-            </label>
-            <button 
-                    type="submit" 
-                    class="p- m-6 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition-colors duration-200 "
-                >Shorten URL</button>
+        <section class="space-y-4">
+            <div class="flex items-center justify-between gap-4">
+                <h2 class="text-lg font-semibold text-slate-950">Shortened URLs</h2>
+                {% if all_urls %}
+                <span class="rounded-full border border-slate-200 bg-white px-3 py-1 text-xs font-medium text-slate-600">
+                    {{ all_urls|length }} saved
+                </span>
+                {% endif %}
+            </div>
 
-           
-        </form>
-
-        <h2 class="text-2xl font-semibold mb-4">Shortened URLs:</h2>
-        {% if all_urls %}
-        <div>
-            <table class="bg-gray-200">
-                <thead class="bg-gray-200"
-                <tr>
-                    <th class="border px-4 py-2 text-left">short URL</th>
-                    <th class="border px-4 py-2 text-left">original URL</th>
-                    <th class="border px-4 py-2 text-left">Visits</th>
-                    <th class="border px-4 py-2 text-left">Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                    {% for url in all_urls %}
-
-                    <tr class="hover:bg-gray-100">
-                        <td class="border px-4 py-2 text-blue-600 underline">
-                            <a href="/{{url[1]}}" target="_blank" class="text-blue-500 hover:underline">
-                                http://localhost:5000/{{url[1]}}
-                            </a>
-                        </td>
-                        <td class="border px-4 py-2">{{url[0]}}</td>
-                        <td class="border px-4 py-2">{{url[2]}}</td>
-                        <td class="border px-4 py-2">
-                            <form 
-                            action="/delete/{{url[1]}}" 
-                            method="post"
-                            onsubmit="return confirm('Delete this URL?');"
-                            >
-                            <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors duration-200"
-                                >Delete</button>
-                            </form>
-                        </td>
-                    </tr>
-
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        
-        {% else %}
-        <p class="text-gray-600">No shortened URLs available.</p>
-
-        {% endif %}
-    </div>
+            {% if all_urls %}
+            <div class="overflow-hidden rounded-lg border border-slate-200 bg-white shadow-sm">
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-slate-200 text-sm">
+                        <thead class="bg-slate-100 text-left text-xs font-semibold uppercase tracking-wide text-slate-600">
+                            <tr>
+                                <th class="px-4 py-3">Short URL</th>
+                                <th class="px-4 py-3">Original URL</th>
+                                <th class="px-4 py-3">Visits</th>
+                                <th class="px-4 py-3 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-100">
+                            {% for url in all_urls %}
+                            <tr class="transition hover:bg-slate-50">
+                                <td class="whitespace-nowrap px-4 py-3">
+                                    <a
+                                        href="/{{ url[1] }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="font-medium text-blue-700 underline-offset-4 hover:underline"
+                                    >
+                                        {{ request.host_url }}{{ url[1] }}
+                                    </a>
+                                </td>
+                                <td class="max-w-lg px-4 py-3 text-slate-700">
+                                    <a
+                                        href="{{ url[0] }}"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        class="block truncate underline-offset-4 hover:text-slate-950 hover:underline"
+                                        title="{{ url[0] }}"
+                                    >
+                                        {{ url[0] }}
+                                    </a>
+                                </td>
+                                <td class="px-4 py-3">
+                                    <span class="inline-flex min-w-10 justify-center rounded-full bg-slate-100 px-2.5 py-1 text-xs font-semibold text-slate-700">
+                                        {{ url[2] }}
+                                    </span>
+                                </td>
+                                <td class="px-4 py-3 text-right">
+                                    <form
+                                        action="/delete/{{ url[1] }}"
+                                        method="post"
+                                        onsubmit="return confirm('Delete this URL?');"
+                                    >
+                                        <button
+                                            type="submit"
+                                            class="inline-flex h-9 items-center justify-center rounded-md border border-red-200 bg-white px-3 text-sm font-medium text-red-700 transition hover:bg-red-50 focus:outline-none focus:ring-4 focus:ring-red-100"
+                                        >
+                                            Delete
+                                        </button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            {% else %}
+            <div class="rounded-lg border border-dashed border-slate-300 bg-white px-5 py-10 text-center shadow-sm">
+                <p class="text-sm font-medium text-slate-700">No shortened URLs yet.</p>
+                <p class="mt-1 text-sm text-slate-500">Add your first destination URL above.</p>
+            </div>
+            {% endif %}
+        </section>
+    </main>
 </body>
 </html>
